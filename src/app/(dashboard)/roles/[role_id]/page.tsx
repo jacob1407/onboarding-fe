@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Pencil, Save } from "lucide-react"
+import { ORG_ID } from "@/lib/constants"
 
 interface Application {
     id: string
@@ -69,7 +70,7 @@ export default function ViewRolePage() {
                 name,
                 description,
                 application_ids: selectedApps,
-                organisation_id: role!.organisation_id
+                organisation_id: ORG_ID
             }
             const updated = await api.put<Role>(`/roles/${role_id}`, payload)
             setRole(updated)
