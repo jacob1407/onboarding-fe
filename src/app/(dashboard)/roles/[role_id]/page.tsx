@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { api } from "@/lib/api"
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Pencil, Save } from "lucide-react"
 import { ORG_ID } from "@/lib/constants"
+import { toast, Toaster } from "sonner"
 
 interface Application {
     id: string
@@ -34,6 +35,14 @@ export default function ViewRolePage() {
     const [description, setDescription] = useState("")
     const [selectedApps, setSelectedApps] = useState<string[]>([])
     const [availableApps, setAvailableApps] = useState<Application[]>([])
+    const [successfullyUpdated, setSuccessfullyUpdated] = useState(false)
+
+    useEffect(() => {
+        if (successfullyUpdated) {
+            toast.success("Role updated successfully")
+            setSuccessfullyUpdated(false)
+        }
+    }, [successfullyUpdated])
 
     useEffect(() => {
         const fetchRole = async () => {
@@ -75,6 +84,7 @@ export default function ViewRolePage() {
             const updated = await api.put<Role>(`/roles/${role_id}`, payload)
             setRole(updated)
             setEditMode(false)
+            setSuccessfullyUpdated(true)
         } catch (err) {
             console.error("Failed to update role:", err)
             alert("Failed to save changes")
@@ -103,6 +113,7 @@ export default function ViewRolePage() {
 
     return (
         <div className="max-w-4xl mx-auto py-10 space-y-6">
+            <Toaster />
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold">Role Details</h1>
                 <div className="flex gap-3">
@@ -132,7 +143,7 @@ export default function ViewRolePage() {
                     <div>
                         <label className="block text-sm font-medium mb-1">Description</label>
                         <Textarea
-                            value={description}
+                            value={description ?? ""}
                             disabled={!editMode}
                             onChange={(e) => setDescription(e.target.value)}
                         />

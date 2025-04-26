@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { api } from "@/lib/api"
 import { Loader2, CheckCircle2 } from "lucide-react"
 import { ORG_ID } from "@/lib/constants"
+import { toast, Toaster } from "sonner"
 
 interface Role {
     id: string
@@ -18,13 +19,15 @@ interface Role {
 export default function RolesPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const [showSuccess, setShowSuccess] = useState(false)
     const [roles, setRoles] = useState<Role[]>([])
     const [loading, setLoading] = useState(true)
+    const hasShownToast = useRef(false)
 
     useEffect(() => {
-        if (searchParams.get("created") === "true") {
-            setShowSuccess(true)
+        const created = searchParams.get("created")
+        if (created === "true" && !hasShownToast.current) {
+            hasShownToast.current = true
+            toast.success("Role created successfully")
             router.replace("/roles", { scroll: false })
         }
     }, [searchParams, router])
@@ -46,6 +49,7 @@ export default function RolesPage() {
 
     return (
         <div className="max-w-5xl mx-auto py-10 space-y-8">
+            <Toaster />
             <div className="flex items-center justify-between border-b pb-4">
                 <div>
                     <h1 className="text-3xl font-bold">Roles</h1>
@@ -55,13 +59,6 @@ export default function RolesPage() {
                     <Button>Create Role</Button>
                 </Link>
             </div>
-
-            {showSuccess && (
-                <div className="flex items-center gap-2 text-green-600 text-sm font-medium bg-green-50 border border-green-200 rounded-md px-4 py-2">
-                    <CheckCircle2 className="h-4 w-4" /> Role created successfully.
-                </div>
-            )}
-
             <Card className="shadow-sm">
                 <CardHeader>
                     <CardTitle className="text-lg">Available Roles</CardTitle>

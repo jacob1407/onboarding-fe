@@ -85,7 +85,7 @@ export default function CreateRolePage() {
                     <div className="space-y-1">
                         <Label>Description</Label>
                         <Textarea
-                            value={description}
+                            value={description ?? ""}
                             onChange={e => setDescription(e.target.value)}
                             placeholder="Briefly describe this role’s purpose or scope."
                             disabled={submitting}
