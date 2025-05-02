@@ -23,12 +23,16 @@ interface Employee {
     first_name: string
     last_name: string
     email: string
+    username: string
     organisation_id: string
+    type: "employee"
+    status: "active" | "inactive" | "invited" | "archived"
     role: Role
 }
 
 export default function ViewEmployeePage() {
     const { employee_id } = useParams()
+    const router = useRouter()
     const [employee, setEmployee] = useState<Employee | null>(null)
     const [availableRoles, setAvailableRoles] = useState<Role[]>([])
     const [loading, setLoading] = useState(true)
@@ -46,7 +50,7 @@ export default function ViewEmployeePage() {
     useEffect(() => {
         const fetchEmployee = async () => {
             try {
-                const data = await api.get<Employee>(`/employees/${employee_id}`)
+                const data = await api.get<Employee>(`/users/employees/${employee_id}`)
                 setEmployee(data)
             } catch (err) {
                 console.error("Failed to fetch employee:", err)
@@ -73,20 +77,25 @@ export default function ViewEmployeePage() {
 
         try {
             setSaving(true)
+
             const payload = {
                 first_name: employee.first_name,
                 last_name: employee.last_name,
                 email: employee.email,
+                username: employee.username,
+                organisation_id: employee.organisation_id,
+                type: "employee",
                 role_id: employee.role.id,
             }
-            const updated = await api.put<Employee>(`/employees/${employee_id}`, payload)
+
+            const updated = await api.put<Employee>(`/users/employees/${employee_id}`, payload)
             setEmployee(updated)
             setEditMode(false)
             setSaving(false)
             setSuccessfullyUpdated(true)
         } catch (err) {
             console.error("Failed to update employee:", err)
-            alert("Failed to update employee.")
+            toast.error("Failed to update employee.")
         }
     }
 
@@ -171,7 +180,7 @@ export default function ViewEmployeePage() {
                             <div
                                 key={role.id}
                                 className={`flex items-center justify-between border rounded-md p-4 hover:bg-muted transition-colors cursor-pointer ${employee.role.id === role.id ? "border-primary" : ""}`}
-                                onClick={() => setEmployee(prev => prev ? { ...prev, role: role } : prev)}
+                                onClick={() => setEmployee(prev => prev ? { ...prev, role } : prev)}
                             >
                                 <div>
                                     <div className="font-semibold">{role.name}</div>

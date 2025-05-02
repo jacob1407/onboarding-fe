@@ -9,13 +9,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { api } from "@/lib/api"
-import { ORG_ID } from "@/lib/constants"
 
 interface Employee {
     id: string
     first_name: string
     last_name: string
     email: string
+    username: string
+    status: "invited" | "active" | "inactive" | "archived"
+    type: "admin" | "employee"
+    organisation_id: string
 }
 
 export default function EmployeesPage() {
@@ -27,7 +30,7 @@ export default function EmployeesPage() {
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
-                const data = await api.get<Employee[]>(`/employees?organisation_id=${ORG_ID}`)
+                const data = await api.get<Employee[]>(`/users?user_type=employee`)
                 setEmployees(data)
             } catch (err) {
                 console.error("Failed to fetch employees:", err)
@@ -51,7 +54,7 @@ export default function EmployeesPage() {
             <div className="flex items-center justify-between border-b pb-4">
                 <div>
                     <h1 className="text-3xl font-bold">Employees</h1>
-                    <p className="text-muted-foreground text-sm mt-1">Manage your organisation's employees.</p>
+                    <p className="text-muted-foreground text-sm mt-1">View all users with the role of employee.</p>
                 </div>
                 <Link href="/employees/create">
                     <Button>Create Employee</Button>
@@ -84,8 +87,13 @@ export default function EmployeesPage() {
                                             </AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <div className="font-semibold text-base">{emp.first_name} {emp.last_name}</div>
+                                            <div className="font-semibold text-base">
+                                                {emp.first_name} {emp.last_name}
+                                            </div>
                                             <div className="text-sm text-muted-foreground">{emp.email}</div>
+                                            <div className="text-sm text-muted-foreground">Username: {emp.username}</div>
+                                            <div className="text-sm text-muted-foreground">Status: {emp.status}</div>
+                                            <div className="text-sm text-muted-foreground">Type: {emp.type}</div>
                                         </div>
                                     </div>
                                     <Link href={`/employees/${emp.id}`}>
