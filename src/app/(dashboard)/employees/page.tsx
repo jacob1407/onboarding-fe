@@ -9,6 +9,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { api } from "@/lib/api"
+import { OnboardingStatusBadge } from "@/components/ui/onboardingStatusBadge"
+
+interface Role {
+    id: string
+    name: string
+    code: string
+    description: string | null
+}
 
 interface Employee {
     id: string
@@ -16,9 +24,11 @@ interface Employee {
     last_name: string
     email: string
     username: string
-    status: "invited" | "active" | "inactive" | "archived"
-    type: "admin" | "employee"
+    status: string
+    type: string
     organisation_id: string
+    role: Role
+    onboarding_status: string
 }
 
 export default function EmployeesPage() {
@@ -30,7 +40,7 @@ export default function EmployeesPage() {
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
-                const data = await api.get<Employee[]>(`/users?user_type=employee`)
+                const data = await api.get<Employee[]>("/users/employees")
                 setEmployees(data)
             } catch (err) {
                 console.error("Failed to fetch employees:", err)
@@ -54,7 +64,7 @@ export default function EmployeesPage() {
             <div className="flex items-center justify-between border-b pb-4">
                 <div>
                     <h1 className="text-3xl font-bold">Employees</h1>
-                    <p className="text-muted-foreground text-sm mt-1">View all users with the role of employee.</p>
+                    <p className="text-muted-foreground text-sm mt-1">Manage your organisation's employees.</p>
                 </div>
                 <Link href="/employees/create">
                     <Button>Create Employee</Button>
@@ -91,9 +101,14 @@ export default function EmployeesPage() {
                                                 {emp.first_name} {emp.last_name}
                                             </div>
                                             <div className="text-sm text-muted-foreground">{emp.email}</div>
-                                            <div className="text-sm text-muted-foreground">Username: {emp.username}</div>
-                                            <div className="text-sm text-muted-foreground">Status: {emp.status}</div>
-                                            <div className="text-sm text-muted-foreground">Type: {emp.type}</div>
+                                            <div className="text-sm mt-1">
+                                                <strong>Role:</strong> {emp.role.name} — {emp.role.description ?? "No description"}
+                                            </div>
+                                            <div className="text-sm mt-1 flex items-center gap-2">
+                                                <strong>Onboarding Status:</strong>
+                                                <OnboardingStatusBadge status={emp.onboarding_status} />
+                                            </div>
+
                                         </div>
                                     </div>
                                     <Link href={`/employees/${emp.id}`}>

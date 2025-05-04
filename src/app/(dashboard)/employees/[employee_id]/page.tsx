@@ -3,14 +3,16 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Loader2, Pencil, Save } from "lucide-react"
 import { api } from "@/lib/api"
 import Link from "next/link"
 import { toast, Toaster } from "sonner"
 import { ORG_ID } from "@/lib/constants"
+import { OnboardingStatusBadge } from "@/components/ui/onboardingStatusBadge"
 
 interface Role {
     id: string
@@ -27,6 +29,7 @@ interface Employee {
     organisation_id: string
     type: "employee"
     status: "active" | "inactive" | "invited" | "archived"
+    onboarding_status: "pending" | "in_progress" | "completed"
     role: Role
 }
 
@@ -111,10 +114,18 @@ export default function ViewEmployeePage() {
         return <div className="text-center text-muted-foreground">Employee not found.</div>
     }
 
+    const statusColor = {
+        active: "bg-green-100 text-green-800",
+        invited: "bg-blue-100 text-blue-800",
+        inactive: "bg-gray-100 text-gray-800",
+        archived: "bg-red-100 text-red-800",
+    }[employee.status]
+
     return (
         <div className="max-w-2xl mx-auto py-10 space-y-6">
             <Toaster />
-            <div className="flex items-center justify-between">
+
+            <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold">Employee Details</h1>
                 <div className="flex gap-3">
                     <Link href="/employees">
@@ -126,76 +137,84 @@ export default function ViewEmployeePage() {
                 </div>
             </div>
 
-            <div className="flex items-center justify-center">
-                <Avatar className="h-24 w-24">
-                    <AvatarImage src={undefined} />
-                    <AvatarFallback>
-                        {employee.first_name.charAt(0)}{employee.last_name.charAt(0)}
-                    </AvatarFallback>
-                </Avatar>
-            </div>
-
             <Card className="shadow-sm">
-                <CardHeader>
-                    <CardTitle className="text-lg">Basic Info</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">First Name</label>
-                        <Input
-                            value={employee.first_name}
-                            disabled={!editMode}
-                            onChange={(e) => setEmployee(prev => prev ? { ...prev, first_name: e.target.value } : prev)}
-                        />
+                <CardContent className="py-8 px-6 space-y-6">
+                    <div className="flex flex-col items-center text-center space-y-2">
+                        <Avatar className="h-20 w-20">
+                            <AvatarImage src={undefined} />
+                            <AvatarFallback>
+                                {employee.first_name.charAt(0)}{employee.last_name.charAt(0)}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="text-xl font-semibold">
+                            {employee.first_name} {employee.last_name}
+                        </div>
+                        <div className="text-sm text-muted-foreground">{employee.email}</div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Last Name</label>
-                        <Input
-                            value={employee.last_name}
-                            disabled={!editMode}
-                            onChange={(e) => setEmployee(prev => prev ? { ...prev, last_name: e.target.value } : prev)}
-                        />
+                    <div className="border-t pt-6 grid gap-5">
+                        <div>
+                            <label className="block text-sm font-medium mb-1">First Name</label>
+                            <Input
+                                value={employee.first_name}
+                                disabled={!editMode}
+                                onChange={(e) => setEmployee(prev => prev ? { ...prev, first_name: e.target.value } : prev)}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Last Name</label>
+                            <Input
+                                value={employee.last_name}
+                                disabled={!editMode}
+                                onChange={(e) => setEmployee(prev => prev ? { ...prev, last_name: e.target.value } : prev)}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Email</label>
+                            <Input
+                                value={employee.email}
+                                disabled={!editMode}
+                                onChange={(e) => setEmployee(prev => prev ? { ...prev, email: e.target.value } : prev)}
+                                type="email"
+                            />
+                        </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Email</label>
-                        <Input
-                            value={employee.email}
-                            disabled={!editMode}
-                            onChange={(e) => setEmployee(prev => prev ? { ...prev, email: e.target.value } : prev)}
-                            type="email"
-                        />
+                    <div className="border-t pt-6 grid gap-4">
+                        <div className="flex justify-between items-center">
+                            <span className="text-sm text-muted-foreground">Account Status</span>
+                            <Badge className={statusColor}>{employee.status}</Badge>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-sm text-muted-foreground">Onboarding Status</span>
+                            <OnboardingStatusBadge status={employee.onboarding_status} />
+                        </div>
                     </div>
-                </CardContent>
-            </Card>
 
-            <Card className="shadow-sm">
-                <CardHeader>
-                    <CardTitle className="text-lg">Role Info</CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                    {editMode ? (
-                        availableRoles.map(role => (
-                            <div
-                                key={role.id}
-                                className={`flex items-center justify-between border rounded-md p-4 hover:bg-muted transition-colors cursor-pointer ${employee.role.id === role.id ? "border-primary" : ""}`}
-                                onClick={() => setEmployee(prev => prev ? { ...prev, role } : prev)}
-                            >
-                                <div>
-                                    <div className="font-semibold">{role.name}</div>
-                                    <div className="text-sm text-muted-foreground">{role.description || "No description."}</div>
-                                </div>
+                    <div className="border-t pt-6">
+                        <div className="text-sm font-medium text-muted-foreground mb-2">Role</div>
+                        {editMode ? (
+                            <div className="grid gap-3">
+                                {availableRoles.map(role => (
+                                    <div
+                                        key={role.id}
+                                        className={`flex items-center justify-between border rounded-md p-4 hover:bg-muted transition-colors cursor-pointer ${employee.role.id === role.id ? "border-primary" : ""}`}
+                                        onClick={() => setEmployee(prev => prev ? { ...prev, role } : prev)}
+                                    >
+                                        <div>
+                                            <div className="font-semibold">{role.name}</div>
+                                            <div className="text-sm text-muted-foreground">{role.description || "No description."}</div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))
-                    ) : (
-                        <div className="flex items-center justify-between border rounded-md p-4">
-                            <div>
+                        ) : (
+                            <div className="p-4 border rounded-md">
                                 <div className="font-semibold">{employee.role.name}</div>
                                 <div className="text-sm text-muted-foreground">{employee.role.description || "No description."}</div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </CardContent>
             </Card>
         </div>
