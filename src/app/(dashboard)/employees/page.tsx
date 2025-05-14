@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { toast, Toaster } from "sonner"
 import { api } from "@/lib/api"
 import { OnboardingStatusBadge } from "@/components/ui/onboardingStatusBadge"
 
@@ -36,6 +36,7 @@ export default function EmployeesPage() {
     const searchParams = useSearchParams()
     const [employees, setEmployees] = useState<Employee[]>([])
     const [loading, setLoading] = useState(true)
+    const [startingId, setStartingId] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchEmployees = async () => {
@@ -59,8 +60,27 @@ export default function EmployeesPage() {
         }
     }, [searchParams, router])
 
+    const handleStartOnboarding = async (userId: string) => {
+        setStartingId(userId)
+        try {
+            await api.post(`/onboarding/start`, { user_id: userId })
+            toast.success("Onboarding started successfully")
+            setEmployees(prev =>
+                prev.map(e =>
+                    e.id === userId ? { ...e, onboarding_status: "in_progress" } : e
+                )
+            )
+        } catch (err) {
+            console.error("Failed to start onboarding:", err)
+            toast.error("Failed to start onboarding")
+        } finally {
+            setStartingId(null)
+        }
+    }
+
     return (
         <div className="max-w-5xl mx-auto py-10 space-y-8">
+            <Toaster />
             <div className="flex items-center justify-between border-b pb-4">
                 <div>
                     <h1 className="text-3xl font-bold">Employees</h1>
@@ -108,12 +128,29 @@ export default function EmployeesPage() {
                                                 <strong>Onboarding Status:</strong>
                                                 <OnboardingStatusBadge status={emp.onboarding_status} />
                                             </div>
-
                                         </div>
                                     </div>
-                                    <Link href={`/employees/${emp.id}`}>
-                                        <Button variant="outline" size="sm">View</Button>
-                                    </Link>
+                                    <div className="flex gap-2">
+                                        <Link href={`/employees/${emp.id}`}>
+                                            <Button variant="outline" size="sm">View</Button>
+                                        </Link>
+                                        {emp.onboarding_status === "pending" && (
+                                            <Button
+                                                size="sm"
+                                                disabled={startingId === emp.id}
+                                                onClick={() => handleStartOnboarding(emp.id)}
+                                            >
+                                                {startingId === emp.id ? (
+                                                    <>
+                                                        <Loader2 className="w-3 h-3 animate-spin mr-2" />
+                                                        Starting...
+                                                    </>
+                                                ) : (
+                                                    "Start Onboarding"
+                                                )}
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>

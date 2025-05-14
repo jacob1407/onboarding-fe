@@ -10,7 +10,6 @@ const navItems = [
     { label: "Roles", href: "/roles" },
     { label: "Applications", href: "/applications" },
     { label: "Contacts", href: "/contacts" },
-    { label: "Onboarding", href: "/onboarding" },
     { label: "Settings", href: "/settings" },
 ]
 
