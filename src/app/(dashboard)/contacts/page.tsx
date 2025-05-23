@@ -16,7 +16,6 @@ interface Contact {
     email: string
 }
 
-const ORG_ID = "a65e7da5-8145-4d96-a787-a45cfa42c9c3"
 
 export default function ContactsPage() {
     const hasShownToast = useRef(false)
@@ -28,7 +27,7 @@ export default function ContactsPage() {
     useEffect(() => {
         const fetchContacts = async () => {
             try {
-                const data = await api.get<Contact[]>(`/contacts?organisation_id=${ORG_ID}`)
+                const data = await api.get<Contact[]>(`/contacts`)
                 setContacts(data)
             } catch (err) {
                 console.error("Failed to fetch contacts:", err)
@@ -44,6 +43,11 @@ export default function ContactsPage() {
         if (searchParams.get("created") === "true" && !hasShownToast.current) {
             hasShownToast.current = true
             toast.success("Contact created successfully")
+            router.replace("/contacts", { scroll: false })
+        }
+        else if (searchParams.get("deleted") === "true" && !hasShownToast.current) {
+            hasShownToast.current = true
+            toast.success("Contact deleted successfully")
             router.replace("/contacts", { scroll: false })
         }
     }, [searchParams, router])

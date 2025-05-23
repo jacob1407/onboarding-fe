@@ -7,7 +7,7 @@ interface Application {
     code: string
 }
 
-export function useOrgApplications(orgId: string) {
+export function useOrgApplications() {
     const [applications, setApplications] = useState<Application[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<Error | null>(null)
@@ -16,7 +16,7 @@ export function useOrgApplications(orgId: string) {
         const fetchApplications = async () => {
             try {
                 setLoading(true)
-                const apps = await api.get<Application[]>(`/applications?organisation_id=${orgId}`)
+                const apps = await api.get<Application[]>(`/applications`)
                 setApplications(apps)
             } catch (err) {
                 setError(err as Error)
@@ -26,7 +26,7 @@ export function useOrgApplications(orgId: string) {
         }
 
         fetchApplications()
-    }, [orgId])
+    }, [])
 
     return { applications, loading, error }
 }

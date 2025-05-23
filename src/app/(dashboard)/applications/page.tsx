@@ -16,7 +16,6 @@ interface Application {
     description: string
 }
 
-const ORG_ID = "a65e7da5-8145-4d96-a787-a45cfa42c9c3"
 
 export default function ApplicationsPage() {
     const router = useRouter()
@@ -28,7 +27,7 @@ export default function ApplicationsPage() {
     useEffect(() => {
         const fetchApps = async () => {
             try {
-                const data = await api.get<Application[]>(`/applications?organisation_id=${ORG_ID}`)
+                const data = await api.get<Application[]>(`/applications`)
                 setApps(data)
             } catch (err) {
                 console.error("Failed to fetch applications:", err)
@@ -47,6 +46,14 @@ export default function ApplicationsPage() {
             hasShownToast.current = true
             toast.success("Application created successfully")
             router.replace("/applications", { scroll: false })
+        }
+        else if (searchParams.get("deleted") === "true" && !hasShownToast.current) {
+            const deleted = searchParams.get("deleted")
+            if (deleted === "true" && !hasShownToast.current) {
+                hasShownToast.current = true
+                toast.success("Application deleted successfully")
+                router.replace("/applications", { scroll: false })
+            }
         }
     }, [searchParams, router])
 

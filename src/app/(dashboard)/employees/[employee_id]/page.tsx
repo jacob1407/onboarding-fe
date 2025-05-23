@@ -12,7 +12,6 @@ import { Loader2, Pencil, Save } from "lucide-react"
 import { api } from "@/lib/api"
 import Link from "next/link"
 import { toast, Toaster } from "sonner"
-import { ORG_ID } from "@/lib/constants"
 import { OnboardingStatusBadge } from "@/components/ui/onboardingStatusBadge"
 
 interface Role {
@@ -79,7 +78,7 @@ export default function ViewEmployeePage() {
 
         const fetchRoles = async () => {
             try {
-                const roles = await api.get<Role[]>(`/roles?organisation_id=${ORG_ID}`)
+                const roles = await api.get<Role[]>(`/roles`)
                 setAvailableRoles(roles)
             } catch (err) {
                 console.error("Failed to fetch roles:", err)
@@ -101,7 +100,6 @@ export default function ViewEmployeePage() {
                 last_name: employee.last_name,
                 email: employee.email,
                 username: employee.username,
-                organisation_id: employee.organisation_id,
                 type: "employee",
                 role_id: employee.role.id,
             }

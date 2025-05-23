@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Loader2 } from "lucide-react"
 import { api } from "@/lib/api"
 import Link from "next/link"
-import { ORG_ID } from "@/lib/constants"
 
 interface Contact {
     id: string
@@ -30,7 +29,7 @@ export default function CreateApplicationPage() {
     useEffect(() => {
         const fetchContacts = async () => {
             try {
-                const data = await api.get<Contact[]>(`/contacts?organisation_id=${ORG_ID}`)
+                const data = await api.get<Contact[]>(`/contacts`)
                 setContacts(data)
             } catch (err) {
                 console.error("Failed to fetch contacts:", err)
@@ -53,7 +52,6 @@ export default function CreateApplicationPage() {
             const payload = {
                 name,
                 description,
-                organisation_id: ORG_ID,
                 contact_ids: selectedContacts
             }
             await api.post("/applications", payload)

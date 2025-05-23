@@ -11,7 +11,16 @@ import { Loader2, Pencil, Save } from "lucide-react"
 import { api } from "@/lib/api"
 import { toast, Toaster } from "sonner"
 import Link from "next/link"
-import { ORG_ID } from "@/lib/constants"
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "@/components/ui/dialog"
+import { Trash2 } from "lucide-react"
 
 interface Contact {
     id: string
@@ -37,6 +46,18 @@ export default function ViewApplicationPage() {
     const [description, setDescription] = useState("")
     const [selectedContacts, setSelectedContacts] = useState<string[]>([])
     const [availableContacts, setAvailableContacts] = useState<Contact[]>([])
+    const [dialogOpen, setDialogOpen] = useState(false)
+
+    const handleDelete = async () => {
+        try {
+            await api.delete(`/applications/${application_id}`)
+            toast.success("Application deleted")
+            router.push("/applications?deleted=true")
+        } catch (err) {
+            console.error("Failed to delete application:", err)
+            toast.error("Failed to delete application.")
+        }
+    }
 
     useEffect(() => {
         const fetchApp = async () => {
@@ -55,7 +76,7 @@ export default function ViewApplicationPage() {
 
         const fetchContacts = async () => {
             try {
-                const contacts = await api.get<Contact[]>(`/contacts?organisation_id=a65e7da5-8145-4d96-a787-a45cfa42c9c3`)
+                const contacts = await api.get<Contact[]>(`/contacts`)
                 setAvailableContacts(contacts)
             } catch (err) {
                 console.error("Failed to fetch contacts:", err)
@@ -77,7 +98,6 @@ export default function ViewApplicationPage() {
             const payload = {
                 name,
                 description,
-                organisation_id: ORG_ID,
                 contact_ids: selectedContacts
             }
             const updated = await api.put<Application>(`/applications/${application_id}`, payload)
@@ -112,9 +132,31 @@ export default function ViewApplicationPage() {
                         <Button variant="outline">Back</Button>
                     </Link>
                     <Button onClick={() => (editMode ? handleSave() : setEditMode(true))}>
-                        {editMode ? <><Save className="w-4 h-4 mr-2" /> Save</> : <><Pencil className="w-4 h-4 mr-2" /> Edit</>}
+                        {editMode ? <><Save className="w-4 h-4 mr-1" /> Save</> : <><Pencil className="w-4 h-4 mr-1" /> Edit</>}
                     </Button>
+                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button disabled={editMode} variant="destructive"><Trash2 className="w-4 h-4 mr-1" /> Delete</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Delete Application</DialogTitle>
+                                <DialogDescription>
+                                    Are you sure you want to delete this application? This action cannot be undone.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button variant="destructive" onClick={handleDelete}>
+                                    Delete
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
+
             </div>
 
             <Card>

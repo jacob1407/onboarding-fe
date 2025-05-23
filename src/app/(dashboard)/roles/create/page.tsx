@@ -11,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useOrgApplications } from "@/hooks/useOrgApplications"
 import { Loader2 } from "lucide-react"
 import { api } from "@/lib/api"
-import { ORG_ID } from "@/lib/constants"
 
 
 export default function CreateRolePage() {
@@ -19,7 +18,7 @@ export default function CreateRolePage() {
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
     const [selectedApps, setSelectedApps] = useState<string[]>([])
-    const { applications: applicationOptions, loading } = useOrgApplications(ORG_ID)
+    const { applications: applicationOptions, loading } = useOrgApplications()
     const [submitting, setSubmitting] = useState(false)
 
     const toggleApp = (id: string) => {
@@ -34,7 +33,6 @@ export default function CreateRolePage() {
             const payload = {
                 name,
                 description,
-                organisation_id: ORG_ID,
                 application_ids: selectedApps
             }
             await api.post("/roles", payload)

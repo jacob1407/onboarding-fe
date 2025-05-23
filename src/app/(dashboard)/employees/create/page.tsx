@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
 import { api } from "@/lib/api"
-import { ORG_ID } from "@/lib/constants"
 import { toast } from "sonner"
 import Link from "next/link"
 
@@ -30,7 +29,7 @@ export default function CreateEmployeePage() {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const data = await api.get<Role[]>(`/roles?organisation_id=${ORG_ID}`)
+                const data = await api.get<Role[]>(`/roles`)
                 setRoles(data)
             } catch (err) {
                 console.error("Failed to fetch roles:", err)
@@ -57,7 +56,6 @@ export default function CreateEmployeePage() {
                 username: email, // using email as username
                 type: "employee",
                 role_id: selectedRoleId,
-                organisation_id: ORG_ID,
             })
             router.push("/employees?created=true")
         } catch (err) {

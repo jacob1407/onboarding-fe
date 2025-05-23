@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { api } from "@/lib/api"
 import { Loader2, CheckCircle2 } from "lucide-react"
-import { ORG_ID } from "@/lib/constants"
 import { toast, Toaster } from "sonner"
 
 interface Role {
@@ -35,7 +34,7 @@ export default function RolesPage() {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const data = await api.get<Role[]>(`/roles?organisation_id=${ORG_ID}`)
+                const data = await api.get<Role[]>(`/roles`)
                 setRoles(data)
             } catch (err) {
                 console.error("Failed to fetch roles:", err)

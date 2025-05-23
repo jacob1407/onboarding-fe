@@ -1,10 +1,12 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
 async function request<T>(url: string, options: RequestInit): Promise<T> {
+    const token = localStorage.getItem("access_token")
     const res = await fetch(`${BASE_URL}${url}`, {
         headers: {
             "Content-Type": "application/json",
             ...(options.headers || {}),
+            "Authorization": `Bearer ${token}`,
         },
         ...options,
     })
@@ -12,7 +14,16 @@ async function request<T>(url: string, options: RequestInit): Promise<T> {
     console.log("response: ", res)
     if (!res.ok) {
         const error = await res.text()
+        if (res.status === 401 && error.includes("token expired") || error.includes("Signature has expired")) {
+            localStorage.removeItem("token")
+            window.location.href = "/login"
+            return {} as T
+        }
         throw new Error(`API Error: ${res.status} ${res.statusText} - ${error}`)
+    }
+
+    if (options.method === "DELETE") {
+        return {} as T
     }
 
     return res.json()
@@ -24,6 +35,14 @@ export const api = {
         request<T>(url, {
             method: "POST",
             body: JSON.stringify(body),
+        }),
+    login: <T>(url: string, body: any) =>
+        request<T>(url, {
+            method: "POST",
+            body: body.toString(),
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
         }),
     put: <T>(url: string, body: any) =>
         request<T>(url, {

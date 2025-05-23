@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { api } from "@/lib/api"
 import Link from "next/link"
 
-const ORG_ID = "a65e7da5-8145-4d96-a787-a45cfa42c9c3"
 
 export default function CreateContactPage() {
     const router = useRouter()
@@ -24,7 +23,6 @@ export default function CreateContactPage() {
                 first_name: firstName,
                 last_name: lastName,
                 email,
-                organisation_id: ORG_ID,
             }
             await api.post("/contacts", payload)
             router.push("/contacts?created=true")

@@ -5,11 +5,19 @@ import { useParams, useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, Pencil, Save } from "lucide-react"
+import { Loader2, Pencil, Save, Trash2 } from "lucide-react"
 import { api } from "@/lib/api"
 import Link from "next/link"
 import { toast, Toaster } from "sonner"
-import { ORG_ID } from "@/lib/constants"
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "@/components/ui/dialog"
 
 interface Contact {
     id: string
@@ -28,6 +36,7 @@ export default function ViewContactPage() {
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
+    const [dialogOpen, setDialogOpen] = useState(false)
 
     useEffect(() => {
         const fetchContact = async () => {
@@ -52,14 +61,24 @@ export default function ViewContactPage() {
                 first_name: firstName,
                 last_name: lastName,
                 email,
-                organisation_id: ORG_ID,
             }
             await api.put(`/contacts/${contact_id}`, payload)
             setEditMode(false)
             toast.success("Contact updated successfully")
         } catch (err) {
             console.error("Failed to update contact:", err)
-            alert("Failed to update contact.")
+            toast.error("Failed to update contact.")
+        }
+    }
+
+    const handleDelete = async () => {
+        try {
+            await api.delete(`/contacts/${contact_id}`)
+            toast.success("Contact deleted")
+            router.push("/contacts?deleted=true")
+        } catch (err) {
+            console.error("Failed to delete contact:", err)
+            toast.error("Failed to delete contact.")
         }
     }
 
@@ -85,8 +104,29 @@ export default function ViewContactPage() {
                         <Button variant="outline">Back</Button>
                     </Link>
                     <Button onClick={() => (editMode ? handleSave() : setEditMode(true))}>
-                        {editMode ? <><Save className="w-4 h-4 mr-2" /> Save</> : <><Pencil className="w-4 h-4 mr-2" /> Edit</>}
+                        {editMode ? <><Save className="w-4 h-4 mr-1" /> Save</> : <><Pencil className="w-4 h-4 mr-1" /> Edit</>}
                     </Button>
+                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button disabled={editMode} variant="destructive"><Trash2 className="w-4 h-4 mr-1" /> Delete</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Delete Contact</DialogTitle>
+                                <DialogDescription>
+                                    Are you sure you want to delete this contact? This action cannot be undone.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button variant="destructive" onClick={handleDelete}>
+                                    Delete
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
 

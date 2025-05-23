@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Pencil, Save } from "lucide-react"
-import { ORG_ID } from "@/lib/constants"
 import { toast, Toaster } from "sonner"
 
 interface Application {
@@ -61,7 +60,7 @@ export default function ViewRolePage() {
 
         const fetchApplications = async () => {
             try {
-                const apps = await api.get<Application[]>("/applications?organisation_id=a65e7da5-8145-4d96-a787-a45cfa42c9c3")
+                const apps = await api.get<Application[]>("/applications")
                 setAvailableApps(apps)
             } catch (err) {
                 console.error("Failed to fetch applications:", err)
@@ -79,7 +78,6 @@ export default function ViewRolePage() {
                 name,
                 description,
                 application_ids: selectedApps,
-                organisation_id: ORG_ID
             }
             const updated = await api.put<Role>(`/roles/${role_id}`, payload)
             setRole(updated)
