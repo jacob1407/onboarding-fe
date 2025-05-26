@@ -9,7 +9,7 @@ const navItems = [
     { label: "Employees", href: "/employees" },
     { label: "Roles", href: "/roles" },
     { label: "Applications", href: "/applications" },
-    { label: "Contacts", href: "/contacts" },
+    { label: "Users", href: "/users" },
     { label: "Settings", href: "/settings" },
 ]
 

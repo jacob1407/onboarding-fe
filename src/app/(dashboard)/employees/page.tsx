@@ -122,7 +122,13 @@ export default function EmployeesPage() {
                                             </div>
                                             <div className="text-sm text-muted-foreground">{emp.email}</div>
                                             <div className="text-sm mt-1">
-                                                <strong>Role:</strong> {emp.role.name} — {emp.role.description ?? "No description"}
+                                                <strong>Role: </strong>
+                                                <Link
+                                                    href={`/roles/${emp.role.id}`}
+                                                    className="font-semibold text-blue-600 hover:underline"
+                                                >
+                                                    {emp.role.name}
+                                                </Link>
                                             </div>
                                             <div className="text-sm mt-1 flex items-center gap-2">
                                                 <strong>Onboarding Status:</strong>

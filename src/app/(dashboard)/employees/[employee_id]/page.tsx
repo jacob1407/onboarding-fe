@@ -242,7 +242,12 @@ export default function ViewEmployeePage() {
                                     </div>
                                 ) : (
                                     <div className="p-4 border rounded-md">
-                                        <div className="font-semibold">{employee.role.name}</div>
+                                        <Link
+                                            href={`/roles/${employee.role.id}`}
+                                            className="font-semibold text-blue-600 hover:underline"
+                                        >
+                                            {employee.role.name}
+                                        </Link>
                                         <div className="text-sm text-muted-foreground">{employee.role.description || "No description."}</div>
                                     </div>
                                 )}

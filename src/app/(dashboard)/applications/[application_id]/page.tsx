@@ -76,7 +76,7 @@ export default function ViewApplicationPage() {
 
         const fetchContacts = async () => {
             try {
-                const contacts = await api.get<Contact[]>(`/contacts`)
+                const contacts = await api.get<Contact[]>(`/users?user_type=access_manager`)
                 setAvailableContacts(contacts)
             } catch (err) {
                 console.error("Failed to fetch contacts:", err)
