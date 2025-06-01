@@ -9,6 +9,14 @@ import { api } from "@/lib/api"
 
 interface LoginResponse {
     access_token: string
+    user: {
+        id: string
+        first_name: string
+        last_name: string
+        email: string
+        user_type: "access_manager" | "admin",
+        username: string
+    }
 }
 
 export default function LoginPage() {
@@ -30,11 +38,12 @@ export default function LoginPage() {
         try {
             const res = await api.login<LoginResponse>("/auth/login", formData)
 
-            if (!res.access_token) {
+            if (!res.access_token || !res.user) {
                 throw new Error("Login failed")
             }
 
             localStorage.setItem("access_token", res.access_token)
+            localStorage.setItem("user", JSON.stringify(res.user))
             toast.success("Logged in successfully")
             router.push("/")
         } catch (err) {

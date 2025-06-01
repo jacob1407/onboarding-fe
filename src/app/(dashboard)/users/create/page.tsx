@@ -88,8 +88,8 @@ export default function CreateUserPage() {
                             onChange={(e) => setUserType(e.target.value)}
                             className="w-full p-2 border rounded text-sm"
                         >
-                            <option value="employee">Employee</option>
                             <option value="admin">Admin</option>
+                            <option value="access_manager">Access Manager</option>
                         </select>
                     </div>
                 </CardContent>

@@ -15,8 +15,24 @@ interface User {
     last_name: string
     email: string
     username: string
-    type: string
+    type: UserType
     status: string
+}
+
+enum UserType {
+    admin = "admin",
+    access_manager = "access_manager",
+}
+
+function userTypeToString(type: UserType): string {
+    switch (type) {
+        case UserType.admin:
+            return "Admin"
+        case UserType.access_manager:
+            return "Access Manager"
+        default:
+            return "Unknown"
+    }
 }
 
 function UserStatusBadge({ status }: { status: string }) {
@@ -47,7 +63,7 @@ export default function UsersPage() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const data = await api.get<User[]>(`/users?user_type=admin`)
+                const data = await api.get<User[]>(`/users?user_types=admin&user_types=access_manager`)
                 setUsers(data)
             } catch (err) {
                 console.error("Failed to fetch users:", err)
@@ -109,7 +125,7 @@ export default function UsersPage() {
                                                 <strong>Username:</strong> {user.username}
                                             </div>
                                             <div className="text-sm mt-1">
-                                                <strong>Role:</strong> {user.type}
+                                                <strong>Role:</strong> {userTypeToString(user.type)}
                                             </div>
                                             <div className="text-sm mt-1">
                                                 <strong>Status:</strong> <UserStatusBadge status={user.status} />

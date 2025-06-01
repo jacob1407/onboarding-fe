@@ -67,7 +67,7 @@ export default function ViewEmployeePage() {
                 const data = await api.get<Employee>(`/users/employees/${employee_id}`)
                 setEmployee(data)
 
-                const reqs = await api.get<OnboardingRequest[]>(`/onboarding/requests/${employee_id}`)
+                const reqs = await api.get<OnboardingRequest[]>(`/onboarding/requests/employee/${employee_id}`)
                 setRequests(reqs)
             } catch (err) {
                 console.error("Failed to fetch employee:", err)

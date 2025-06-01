@@ -29,7 +29,7 @@ export default function CreateApplicationPage() {
     useEffect(() => {
         const fetchContacts = async () => {
             try {
-                const data = await api.get<Contact[]>(`/contacts`)
+                const data = await api.get<Contact[]>(`/users?user_types=access_manager&user_types=admin`)
                 setContacts(data)
             } catch (err) {
                 console.error("Failed to fetch contacts:", err)
