@@ -15,7 +15,7 @@ export default function CreateUserPage() {
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
-    const [userType, setUserType] = useState("employee")
+    const [userType, setUserType] = useState("admin")
     const [saving, setSaving] = useState(false)
 
     const handleCreate = async () => {

@@ -3,18 +3,53 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { UserModel } from "../models/UserModel"
+import { useEffect, useState } from "react"
+import { api } from "@/lib/api"
 
-const navItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "Employees", href: "/employees" },
-    { label: "Roles", href: "/roles" },
-    { label: "Applications", href: "/applications" },
-    { label: "Users", href: "/users" },
-    { label: "Settings", href: "/settings" },
-]
+interface OnboardingRequest {
+    id: string
+    status: string
+    createdAt: string
+    updatedAt: string
+}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
+    const [userType, setUserType] = useState<string | null>(null)
+    const [pendingRequestsCount, setPendingRequestsCount] = useState<number | null>(null)
+
+    useEffect(() => {
+        const user: UserModel = JSON.parse(localStorage.getItem("user") || "{}")
+        if (user?.type) {
+            setUserType(user.type)
+        }
+    }, [])
+
+    useEffect(() => {
+        const fetchPendingRequests = async () => {
+            try {
+                const data = await api.get<OnboardingRequest[]>("/onboarding/requests/contact?status=requested")
+                setPendingRequestsCount(data.length)
+            } catch (error) {
+                console.error("Failed to fetch pending requests", error)
+            }
+        }
+
+        fetchPendingRequests()
+    }, [userType])
+
+    const navItems = [
+        { label: "My Requests", href: "/my-requests" },
+        { label: "Employees", href: "/employees" },
+        { label: "Roles", href: "/roles" },
+        { label: "Applications", href: "/applications" },
+        { label: "Users", href: "/users" },
+    ]
+
+    if (userType === "admin") {
+        navItems.splice(0, 0, { label: "Dashboard", href: "/" })
+    }
 
     return (
         <div className="flex h-screen">
@@ -30,6 +65,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         )}
                     >
                         {item.label}
+                        {item.label === "My Requests" &&
+                            pendingRequestsCount !== null && pendingRequestsCount > 0 && (
+                                <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                                    {pendingRequestsCount}
+                                </span>
+                            )}
                     </Link>
                 ))}
             </aside>

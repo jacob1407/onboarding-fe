@@ -14,7 +14,7 @@ import { toast, Toaster } from "sonner"
 interface Application {
     id: string
     name: string
-    code: string
+    description: string
 }
 
 interface Role {
@@ -164,7 +164,7 @@ export default function ViewRolePage() {
                                 />
                                 <div>
                                     <div className="font-medium">{app.name}</div>
-                                    <div className="text-sm text-muted-foreground">{app.code}</div>
+                                    <div className="text-sm text-muted-foreground">{app.description}</div>
                                 </div>
                             </label>
                         ))
@@ -178,7 +178,7 @@ export default function ViewRolePage() {
                             >
                                 <div>
                                     <div className="font-medium">{app.name}</div>
-                                    <div className="text-sm text-muted-foreground">{app.code}</div>
+                                    <div className="text-sm text-muted-foreground">{app.description}</div>
                                 </div>
                             </div>
                         ))
