@@ -1,6 +1,7 @@
 const BASE_URL = process.env.BASE_URL || "http://localhost:8080"
 
 async function request<T>(url: string, options: RequestInit): Promise<T> {
+    console.log("process.env.BASE_URL: ", process.env.BASE_URL)
     const token = localStorage.getItem("access_token")
     const res = await fetch(`${BASE_URL}${url}`, {
         headers: {
