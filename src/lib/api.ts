@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+const BASE_URL = process.env.BASE_URL || "http://localhost:8080"
 
 async function request<T>(url: string, options: RequestInit): Promise<T> {
     const token = localStorage.getItem("access_token")
