@@ -45,7 +45,6 @@ interface Employee {
 
 export default function ViewEmployeePage() {
     const { employee_id } = useParams()
-    const router = useRouter()
     const [employee, setEmployee] = useState<Employee | null>(null)
     const [requests, setRequests] = useState<OnboardingRequest[]>([])
     const [availableRoles, setAvailableRoles] = useState<Role[]>([])

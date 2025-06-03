@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -31,7 +31,7 @@ interface Employee {
     onboarding_status: string
 }
 
-export default function EmployeesPage() {
+function EmployeesPageContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [employees, setEmployees] = useState<Employee[]>([])
@@ -164,5 +164,13 @@ export default function EmployeesPage() {
                 </CardContent>
             </Card>
         </div>
+    )
+}
+
+export default function EmployeesPage() {
+    return (
+        <Suspense>
+            <EmployeesPageContent />
+        </Suspense>
     )
 }

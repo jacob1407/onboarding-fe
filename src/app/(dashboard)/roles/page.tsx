@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,7 @@ interface Role {
     description: string
 }
 
-export default function RolesPage() {
+function RolesPageContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [roles, setRoles] = useState<Role[]>([])
@@ -90,5 +90,13 @@ export default function RolesPage() {
                 </CardContent>
             </Card>
         </div>
+    )
+}
+
+export default function RolesPage() {
+    return (
+        <Suspense>
+            <RolesPageContent />
+        </Suspense>
     )
 }

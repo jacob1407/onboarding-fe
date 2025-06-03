@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -16,8 +16,7 @@ interface Application {
     description: string
 }
 
-
-export default function ApplicationsPage() {
+function ApplicationsPageContent() {
     const router = useRouter()
     const hasShownToast = useRef(false)
     const searchParams = useSearchParams()
@@ -102,5 +101,13 @@ export default function ApplicationsPage() {
                 </CardContent>
             </Card>
         </div>
+    )
+}
+
+export default function ApplicationsPage() {
+    return (
+        <Suspense>
+            <ApplicationsPageContent />
+        </Suspense>
     )
 }

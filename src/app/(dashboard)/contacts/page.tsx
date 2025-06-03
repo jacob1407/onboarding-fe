@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -16,8 +16,7 @@ interface Contact {
     email: string
 }
 
-
-export default function ContactsPage() {
+function ContactsPageContent() {
     const hasShownToast = useRef(false)
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -97,5 +96,13 @@ export default function ContactsPage() {
                 </CardContent>
             </Card>
         </div>
+    )
+}
+
+export default function ContactsPage() {
+    return (
+        <Suspense>
+            <ContactsPageContent />
+        </Suspense>
     )
 }
