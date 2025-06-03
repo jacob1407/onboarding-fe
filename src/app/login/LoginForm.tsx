@@ -20,6 +20,7 @@ interface LoginResponse {
 }
 
 export default function LoginForm() {
+    console.log("✅ PAGE RENDERED")
     const router = useRouter()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
