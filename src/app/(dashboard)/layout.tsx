@@ -27,7 +27,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [showDropdown, setShowDropdown] = useState(false)
 
     useEffect(() => {
+        const accessToken = localStorage.getItem(accessTokenLocalStorageKey)
         const storedUser: UserModel = JSON.parse(localStorage.getItem(userLocalStorageKey) || "{}")
+        if (!storedUser || !accessToken) {
+            router.push("/login")
+        }
         if (storedUser?.type) {
             setUserType(storedUser.type)
             setUser(storedUser)
