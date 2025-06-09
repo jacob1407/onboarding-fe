@@ -214,7 +214,12 @@ export default function ViewApplicationPage() {
                                 key={contact.id}
                                 className="flex flex-col sm:flex-row justify-between border rounded-md px-4 py-2 hover:bg-muted/50"
                             >
-                                <div className="font-medium">{contact.first_name} {contact.last_name}</div>
+                                <Link
+                                    href={`/users/${contact.id}`}
+                                    className="font-semibold text-blue-600 hover:underline"
+                                >
+                                    {contact.first_name} {contact.last_name}
+                                </Link>
                                 <div className="text-sm text-muted-foreground">{contact.email}</div>
                             </div>
                         ))

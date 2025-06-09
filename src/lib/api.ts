@@ -1,8 +1,10 @@
+import { accessTokenLocalStorageKey } from "./constants"
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8080"
 
 async function request<T>(url: string, options: RequestInit): Promise<T> {
     console.log("process.env.NEXT_PUBLIC_BASE_URL:", process.env.NEXT_PUBLIC_BASE_URL)
-    const token = localStorage.getItem("access_token")
+    const token = localStorage.getItem(accessTokenLocalStorageKey) || null
     const res = await fetch(`${BASE_URL}${url}`, {
         headers: {
             "Content-Type": "application/json",
@@ -16,9 +18,9 @@ async function request<T>(url: string, options: RequestInit): Promise<T> {
     if (!res.ok) {
         const error = await res.text()
         if (res.status === 401 && error.includes("token expired") || error.includes("Signature has expired")) {
-            localStorage.removeItem("token")
+            localStorage.removeItem(accessTokenLocalStorageKey)
             window.location.href = "/login"
-            return {} as T
+            throw new Error("Unauthorized: Redirecting to login page.")
         }
         throw new Error(`API Error: ${res.status} ${res.statusText} - ${error}`)
     }
