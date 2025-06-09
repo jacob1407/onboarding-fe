@@ -17,7 +17,7 @@ async function request<T>(url: string, options: RequestInit): Promise<T> {
     console.log("response: ", res)
     if (!res.ok) {
         const error = await res.text()
-        if (res.status === 401 && error.includes("token expired") || error.includes("Signature has expired")) {
+        if (res.status === 401) {
             localStorage.removeItem(accessTokenLocalStorageKey)
             window.location.href = "/login"
             throw new Error("Unauthorized: Redirecting to login page.")

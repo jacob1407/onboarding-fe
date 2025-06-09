@@ -7,6 +7,7 @@ import { UserModel } from "../models/UserModel"
 import { useEffect, useState, useRef } from "react"
 import { api } from "@/lib/api"
 import { accessTokenLocalStorageKey, userLocalStorageKey } from "@/lib/constants"
+import { UserType } from "../enums/UserType"
 
 interface OnboardingRequest {
     id: string
@@ -67,15 +68,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     const navItems = [
-        { label: "My Requests", href: "/my-requests" },
         { label: "Employees", href: "/employees" },
         { label: "Roles", href: "/roles" },
         { label: "Applications", href: "/applications" },
         { label: "Users", href: "/users" },
     ]
 
+    if (userType === "access_manager") {
+        navItems.splice(0, 0, { label: "My Requests", href: "/" })
+    }
+
     if (userType === "admin") {
         navItems.splice(0, 0, { label: "Dashboard", href: "/" })
+        navItems.splice(1, 0, { label: "My Requests", href: "/my-requests" })
     }
 
     return (
