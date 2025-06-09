@@ -177,7 +177,12 @@ export default function ViewRolePage() {
                                 className="flex items-center justify-between border rounded-md px-4 py-2 hover:bg-muted/50"
                             >
                                 <div>
-                                    <div className="font-medium">{app.name}</div>
+                                    <Link
+                                        href={`/applications/${app.id}`}
+                                        className="font-semibold text-blue-600 hover:underline"
+                                    >
+                                        {app.name}
+                                    </Link>
                                     <div className="text-sm text-muted-foreground">{app.description}</div>
                                 </div>
                             </div>

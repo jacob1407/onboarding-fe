@@ -4,8 +4,9 @@ import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
+import { toast, Toaster } from "sonner"
 import { api } from "@/lib/api"
+import { accessTokenLocalStorageKey, userLocalStorageKey } from "@/lib/constants"
 
 interface LoginResponse {
     access_token: string
@@ -20,7 +21,6 @@ interface LoginResponse {
 }
 
 export default function LoginForm() {
-    console.log("✅ PAGE RENDERED")
     const router = useRouter()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -43,8 +43,8 @@ export default function LoginForm() {
                 throw new Error("Login failed")
             }
 
-            localStorage.setItem("access_token", res.access_token)
-            localStorage.setItem("user", JSON.stringify(res.user))
+            localStorage.setItem(accessTokenLocalStorageKey, res.access_token)
+            localStorage.setItem(userLocalStorageKey, JSON.stringify(res.user))
             toast.success("Logged in successfully")
             router.push("/")
         } catch (err) {
@@ -64,6 +64,7 @@ export default function LoginForm() {
 
     return (
         <div className="flex items-center justify-center h-screen bg-gray-50">
+            <Toaster />
             <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow w-96 space-y-4">
                 <h1 className="text-2xl font-bold">Login</h1>
 
