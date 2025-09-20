@@ -2,6 +2,10 @@
 
 This application provides a comprehensive UI for automating application provisioning when onboarding employees. It streamlines the process of managing employee access, roles, permissions, and application assignments during the onboarding workflow.
 
+## The Problem
+
+Onboarding employees can take too long due to not having the right access to applications needed to carry out work. The problem is usually to do with ownership - who is responsible for each application? This platform gives a central place to record this information and automates the process of access provisioning.
+
 ## Features
 
 - **Employee Management**: Create and manage employee profiles
